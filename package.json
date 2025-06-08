@@ -1,0 +1,325 @@
+{
+  "name": "vscode-stata",
+  "displayName": "vscode-stata",
+  "description": "VSCode and Stata integration",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "publisher": "kylebutts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kylebutts/vscode-stata.git"
+  },
+  "license": "MIT",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscode-stata.openInteractive",
+        "title": "Open Stata Interactive Window",
+        "category": "Stata Interactive"
+      },
+      {
+        "command": "vscode-stata.runCurrentCell",
+        "title": "Run Current Cell",
+        "category": "Stata Interactive"
+      },
+      {
+        "command": "vscode-stata.runCurrentCellAndAdvance",
+        "title": "Run Current Cell and Advance",
+        "category": "Stata Interactive"
+      },
+      {
+        "command": "vscode-stata.runAllCells",
+        "title": "Run All Cells",
+        "category": "Stata Interactive"
+      },
+      {
+        "command": "vscode-stata.runAboveCells",
+        "title": "Run Above Cells",
+        "category": "Stata Interactive"
+      },
+      {
+        "command": "vscode-stata.goToPreviousCell",
+        "title": "Go to previous cell",
+        "category": "Stata Interactive"
+      },
+      {
+        "command": "vscode-stata.goToNextCell",
+        "title": "Go to next cell",
+        "category": "Stata Interactive"
+      },
+      {
+        "command": "vscode-stata.insertCodeCell",
+        "title": "Insert new cell",
+        "category": "Stata Interactive"
+      },
+
+      {
+        "command": "vscode-stata.sendSelectionOrCurrentLine",
+        "title": "Selection / Current Line",
+        "category": "Send to Stata",
+        "icon": "$(play)"
+      },
+      {
+        "command": "vscode-stata.sendAll",
+        "title": "All Lines",
+        "category": "Send to Stata",
+        "icon": "$(run-all)"
+      },
+      {
+        "command": "vscode-stata.sendAbove",
+        "title": "Above Lines",
+        "category": "Send to Stata",
+        "icon": "$(run-all)"
+      },
+      {
+        "command": "vscode-stata.sendCurrentAndBelow",
+        "title": "Current Line and Below",
+        "category": "Send to Stata",
+        "icon": "$(run-all)"
+      }
+    ],
+    "configuration": [
+      {
+        "type": "object",
+        "title": "stata",
+        "properties": {
+          "vscode-stata.stataPath": {
+            "type": "string",
+            "default": "C:\\Program Files (x86)\\Stata15\\StataSE-64.exe",
+            "description": "Absolute path to Stata executable. Only applicable for Windows."
+          },
+          "vscode-stata.whichApp": {
+            "type": "string",
+            "enum": [
+              "stataMP",
+              "stataIC",
+              "stataSE"
+            ],
+            "default": "stataSE",
+            "description": "Which application to send code to. Only applicable for MacOS."
+          },
+          "vscode-stata.advancePosition": {
+            "type": "boolean",
+            "default": "false",
+            "description": "Cursor advances to the next line after sending the current line when there is no selection."
+          },
+          "vscode-stata.focusWindow": {
+            "type": "boolean",
+            "default": "false",
+            "description": "After code is sent, bring focus to where it was sent"
+          },
+          "vscode-stata.useInteractive": {
+            "type": "boolean",
+            "default": "true",
+            "description": "If true, use VSCode's interactive window with `nbstata` when `* %%` cells are detected. `ipykernel` and `nbstata` needs to be installed in your project directory (using a `uv` virtual env) or globally."
+          }
+        }
+      }
+    ],
+    "keybindings": [
+      {
+        "key": "ctrl+shift+d",
+        "mac": "cmd+shift+d",
+        "command": "vscode-stata.sendAll",
+        "when": "editorTextFocus && (resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata) && !vscode-stata.hasCodeCells && resourceScheme != vscode-notebook-cell && resourceScheme != vscode-interactive-input"
+      },
+      {
+        "key": "shift+enter",
+        "mac": "shift+enter",
+        "command": "vscode-stata.sendSelectionOrCurrentLine",
+        "when": "editorTextFocus && (resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata) && !vscode-stata.hasCodeCells && resourceScheme != vscode-notebook-cell && resourceScheme != vscode-interactive-input"
+      },
+      {
+        "key": "ctrl+shift+d",
+        "mac": "cmd+shift+d",
+        "command": "vscode-stata.runAllCells",
+        "when": "editorTextFocus && (resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata) && vscode-stata.hasCodeCells"
+      },
+      {
+        "key": "cmd+enter",
+        "mac": "cmd+enter",
+        "command": "vscode-stata.runCurrentCellAndAdvance",
+        "when": "editorTextFocus && (resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata) && vscode-stata.hasCodeCells"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata",
+          "command": "vscode-stata.sendAll",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "(resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata) && vscode-stata.hasCodeCells",
+          "command": "vscode-stata.openInteractive",
+          "group": "vscode-stata"
+        },
+        {
+          "when": "(resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata) && vscode-stata.hasCodeCells",
+          "command": "vscode-stata.runCurrentCell",
+          "group": "vscode-stata"
+        },
+        {
+          "when": "(resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata) && vscode-stata.hasCodeCells",
+          "command": "vscode-stata.runCurrentCellAndAdvance",
+          "group": "vscode-stata"
+        },
+        {
+          "when": "(resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata) && vscode-stata.hasCodeCells",
+          "command": "vscode-stata.runAllCells",
+          "group": "vscode-stata"
+        },
+        {
+          "when": "(resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata) && vscode-stata.hasCodeCells",
+          "command": "vscode-stata.runAboveCells",
+          "group": "vscode-stata"
+        },
+        {
+          "when": "(resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata) && vscode-stata.hasCodeCells",
+          "command": "vscode-stata.goToPreviousCell",
+          "group": "vscode-stata"
+        },
+        {
+          "when": "(resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata) && vscode-stata.hasCodeCells",
+          "command": "vscode-stata.goToNextCell",
+          "group": "vscode-stata"
+        },
+        {
+          "when": "(resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata) && vscode-stata.hasCodeCells",
+          "command": "vscode-stata.insertCodeCell",
+          "group": "vscode-stata"
+        },
+
+        {
+          "when": "resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata",
+          "command": "vscode-stata.sendAll",
+          "group": "vscode-stata"
+        },
+        {
+          "when": "resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata",
+          "command": "vscode-stata.sendSelectionOrCurrentLine",
+          "group": "vscode-stata"
+        },
+        {
+          "when": "resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata",
+          "command": "vscode-stata.sendAbove",
+          "group": "vscode-stata"
+        },
+        {
+          "when": "resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata",
+          "command": "vscode-stata.sendCurrentAndBelow",
+          "group": "vscode-stata"
+        }
+      ]
+    },
+    "languages": [
+      {
+        "id": "stata",
+        "aliases": [
+          "stata",
+          "Stata Enhanced",
+          "Stata"
+        ],
+        "extensions": [
+          ".do",
+          ".ado",
+          ".mata"
+        ],
+        "configuration": "./language_config.json"
+      },
+      {
+        "id": "stata-dyndoc-latex",
+        "aliases": [
+          "Stata Dyndoc (LaTeX)"
+        ],
+        "extensions": [
+          ".dotex"
+        ],
+        "configuration": "./language_config.json"
+      },
+      {
+        "id": "stata-dyndoc-md",
+        "aliases": [
+          "Stata Dyndoc (Markdown)"
+        ],
+        "extensions": [
+          ".domd"
+        ],
+        "configuration": "./language_config.json"
+      },
+      {
+        "id": "stata-dyndoc",
+        "aliases": [
+          "Stata Dyndoc (Base)"
+        ],
+        "extensions": [],
+        "configuration": "./language_config.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "stata",
+        "scopeName": "source.stata",
+        "path": "./grammars/stata.json"
+      },
+      {
+        "language": "stata-dyndoc-latex",
+        "scopeName": "source.dyndoc.latex.stata",
+        "path": "./grammars/stata-dyndoc-latex.json"
+      },
+      {
+        "language": "stata-dyndoc-md",
+        "scopeName": "source.dyndoc.md.stata",
+        "path": "./grammars/stata-dyndoc-md.json"
+      },
+      {
+        "language": "stata-dyndoc",
+        "scopeName": "source.dyndoc.stata",
+        "path": "./grammars/stata-dyndoc.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "create-vsix": "npm run package && vsce package",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.100.0",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.25.3",
+    "eslint": "^9.25.1",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "delay": "^6.0.0",
+    "escape-string-applescript": "^3.0.0",
+    "run-applescript": "^7.0.0"
+  }
+}
