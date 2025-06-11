@@ -59,6 +59,11 @@
         "title": "Insert new cell",
         "category": "Stata Interactive"
       },
+      {
+        "command": "vscode-stata.setupPythonEnvironment",
+        "title": "Setup Python Environment for Interactive Features",
+        "category": "Stata Setup"
+      },
 
       {
         "command": "vscode-stata.sendSelectionOrCurrentLine",
@@ -197,6 +202,11 @@
           "when": "(resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata) && vscode-stata.hasCodeCells",
           "command": "vscode-stata.insertCodeCell",
           "group": "vscode-stata"
+        },
+        {
+          "when": "resourceExtname == .do || resourceExtname == .ado || resourceExtname == .mata || editorLangId == stata",
+          "command": "vscode-stata.setupPythonEnvironment",
+          "group": "vscode-stata-setup"
         },
 
         {

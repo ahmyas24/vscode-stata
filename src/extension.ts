@@ -5,7 +5,7 @@ import { initializeLogging, Logger } from "./logging";
 // Interactive Window
 import { detectStataPath } from "./utils";
 import { FileUtils, setupFileUtils } from "./file_utils";
-import { checkAndPromptForSetup, PYTHON_PATH } from "./uv_setup/setup_uv";
+import { setupEnvironment, autoSetup } from "./uv_setup/setup_uv";
 import { getStataInteractiveManager } from "./code_cells/interactiveWindow";
 import { CellCodeLensProvider } from "./code_cells/codeLenses";
 import { activateDecorations } from "./code_cells/decorations";
@@ -21,9 +21,7 @@ import {
   sendSelectionOrCurrentLine,
 } from "./stata_run/send_code";
 
-
 let stataInteractiveManager: any = null;
-const config = vscode.workspace.getConfiguration("vscode-stata");
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -31,8 +29,8 @@ export function activate(context: vscode.ExtensionContext) {
   // Setup "Stata" output channel
   initializeLogging(context);
   
-
   // Auto-detect Stata path
+  const config = vscode.workspace.getConfiguration("vscode-stata");
   detectStataPath().then((path) => {
     if (path) {
       const userPath = config.get("stataPath");
@@ -59,15 +57,22 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand(
       "vscode-stata.sendSelectionOrCurrentLine",
       () => sendSelectionOrCurrentLine()
+    ),
+    // Setup command for manual Python environment installation
+    vscode.commands.registerCommand(
+      "vscode-stata.setupPythonEnvironment", 
+      () => {
+        Logger.info("Manual Python environment setup requested by user");
+        setupEnvironment();
+      }
     )
   );
 
-  // Setup `uv` and `nbstata`
+  // Setup `uv` and `nbstata` automatically (if enabled)
   setupFileUtils(context);
-  const pythonPathFile = FileUtils.getExtensionFilePath(PYTHON_PATH);
-  if (!fs.existsSync(pythonPathFile)) {
-    checkAndPromptForSetup();
-  }
+  autoSetup().catch((error) => {
+    Logger.error(`✖ Failed to auto-setup Python environment: ${error}`);
+  });
 
   // Track interactive feature disposables
   let interactiveDisposables: vscode.Disposable[] = [];

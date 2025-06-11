@@ -27,6 +27,21 @@ export class StataInteractiveWindowManager {
 				}
 			})
 		);
+
+		// Listen for when the interactive window editor becomes invalid
+		context.subscriptions.push(
+			vscode.window.onDidChangeVisibleNotebookEditors((editors) => {
+				if (interactiveWindow) {
+					const stillVisible = editors.some(editor => 
+						editor.notebook === interactiveWindow?.notebookEditor.notebook
+					);
+					if (!stillVisible) {
+						Logger.info("Interactive window editor no longer visible, checking validity");
+						// Don't clear immediately - will be validated on next use
+					}
+				}
+			})
+		);
 	}
 
 	/**
@@ -37,12 +52,22 @@ export class StataInteractiveWindowManager {
 			// Check if the existing interactive window is still valid
 			try {
 				// Verify the notebook editor is still valid and the document exists
-				if (interactiveWindow.notebookEditor.notebook.isClosed) {
-					// Window was closed, clear the reference
+				const notebook = interactiveWindow.notebookEditor.notebook;
+				
+				// Check if notebook is closed or disposed
+				if (notebook.isClosed) {
+					Logger.info("Interactive window notebook is closed, clearing reference");
 					interactiveWindow = undefined;
 				} else {
-					// Just return the existing window - don't try to focus it as that might create a duplicate
-					return interactiveWindow;
+					// Additional validation: check if the editor is still valid
+					const editor = interactiveWindow.notebookEditor;
+					if (editor && editor.notebook === notebook) {
+						Logger.info("Reusing existing interactive window");
+						return interactiveWindow;
+					} else {
+						Logger.info("Interactive window editor is invalid, clearing reference");
+						interactiveWindow = undefined;
+					}
 				}
 			} catch (error) {
 				// The notebook editor is no longer valid, clear the reference
@@ -52,6 +77,7 @@ export class StataInteractiveWindowManager {
 		}
 
 		try {
+			Logger.info("\nCreating new interactive window with nbstata kernel");
 			// Use VS Code's built-in interactive.open command with nbstata kernel
 			const result = (await vscode.commands.executeCommand(
 				"interactive.open",
@@ -69,7 +95,7 @@ export class StataInteractiveWindowManager {
 			// Give the nbstata kernel time to fully initialize and establish UI communication
 			// This helps prevent "UI comm not connected" errors when browsing URLs
 			Logger.info("Waiting for nbstata kernel to fully initialize...");
-			await new Promise((resolve) => setTimeout(resolve, 2000));
+			await new Promise((resolve) => setTimeout(resolve, 1000));
 			Logger.info("nbstata kernel initialization complete");
 
 			Logger.info("Opened Stata interactive window with nbstata kernel");
@@ -114,8 +140,17 @@ export class StataInteractiveWindowManager {
 
 	public async sendCodeToInteractiveWindow(codeToRun: string) {
 		try {
-			// Ensure interactive window is open
-			const windowInfo = await this.openInteractiveWindow();
+			// Ensure interactive window is open - only call this once per session
+			let windowInfo = interactiveWindow;
+			if (!windowInfo) {
+				windowInfo = await this.openInteractiveWindow();
+			}
+
+			// Validate the window is still usable
+			if (windowInfo.notebookEditor.notebook.isClosed) {
+				Logger.info("Interactive window was closed, reopening...");
+				windowInfo = await this.openInteractiveWindow();
+			}
 
 			// Add code to the notebook as a new cell
 			const notebook = windowInfo.notebookEditor.notebook;
@@ -183,6 +218,16 @@ export async function openStataInteractiveWindow(): Promise<void> {
  * Execute Stata code in the interactive window
  */
 export async function executeStataCode(code: string): Promise<void> {
-	const manager = getStataInteractiveManager();
-	await manager.executeCodeChunk(code);
+	if (!stataInteractiveManager) {
+		Logger.error("Stata Interactive Window Manager not initialized. Cannot execute code.");
+		vscode.window.showErrorMessage("Interactive window not available. Please ensure the extension is properly loaded.");
+		return;
+	}
+	
+	try {
+		await stataInteractiveManager.executeCodeChunk(code);
+	} catch (error) {
+		Logger.error(`Failed to execute Stata code: ${error}`);
+		vscode.window.showErrorMessage(`Failed to execute Stata code: ${error}`);
+	}
 }
