@@ -9,8 +9,6 @@ import path from "path";
 import { Logger } from "../logging";
 
 var config = vscode.workspace.getConfiguration("vscode-stata");
-var previousCommand = "";
-
 
 function checkEditor(editor: vscode.TextEditor | undefined) {
   if (!editor) {
@@ -33,7 +31,6 @@ export function sendCodeToStata(code: string) {
         throw err;
       }
     });
-    previousCommand = code;
 
     switch (process.platform) {
       case "darwin":
@@ -194,7 +191,7 @@ function sendLinux(text: string) {
   var cmd = `
       old_cb="$(xclip -o -selection clipboard)";
       this_window="$(xdotool getactivewindow)" &&
-      stata_window="$(xdotool search --name --limit 1 "Stata/(IC|SE|MP)? 1[0-9]\.[0-9]")" &&
+      stata_window="$(xdotool search --name --limit 1 "Stata/(IC|SE|MP)? 1[0-9].[0-9]")" &&
       cat ~/.stataRun_code | xclip -i -selection clipboard &&
       xdotool \
         keyup ctrl shift \

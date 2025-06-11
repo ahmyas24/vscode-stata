@@ -7,7 +7,6 @@ import * as vscode from 'vscode';
 import { type Cell, type CellParser, getParser } from './parser';
 import { canHaveCells, getOrCreateDocumentManager } from './documentManager';
 import { executeStataCode } from './interactiveWindow';
-import { Logger } from '../logging';
 
 export interface ExecuteCode {
 	(language: string, code: string): Promise<void>;

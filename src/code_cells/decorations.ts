@@ -130,7 +130,7 @@ export function activateDecorations(
     }),
 
     // Trigger a decorations update when the active editor's content changes.
-    vscode.workspace.onDidChangeConfiguration((event) => {
+    vscode.workspace.onDidChangeConfiguration(() => {
       if (activeEditor) {
         triggerUpdateDecorations(true);
       }

@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Logger } from '../logging';
 import { Cell, getParser, parseCells, supportedLanguageIds } from './parser';
 
 const IGNORED_SCHEMES = [

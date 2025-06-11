@@ -1,10 +1,9 @@
 import * as vscode from "vscode";
-import fs from "fs";
 import { initializeLogging, Logger } from "./logging";
 
 // Interactive Window
 import { detectStataPath } from "./utils";
-import { FileUtils, setupFileUtils } from "./file_utils";
+import { setupFileUtils } from "./file_utils";
 import { setupEnvironment, autoSetup } from "./uv_setup/setup_uv";
 import { getStataInteractiveManager } from "./code_cells/interactiveWindow";
 import { CellCodeLensProvider } from "./code_cells/codeLenses";

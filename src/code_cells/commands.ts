@@ -6,12 +6,6 @@
 import * as vscode from "vscode";
 import { openStataInteractiveWindow } from "./interactiveWindow";
 import { getActiveCodeCellManager } from "./codeCellManager";
-import {
-  sendAbove,
-  sendAll,
-  sendCurrentAndBelow,
-  sendSelectionOrCurrentLine,
-} from "../stata_run/send_code";
 
 export function registerCommands(disposables: vscode.Disposable[]) {
   disposables.push(

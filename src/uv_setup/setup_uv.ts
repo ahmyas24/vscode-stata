@@ -23,7 +23,7 @@ async function isUvInstalled(): Promise<boolean> {
     await execAsync(command);
     Logger.info("✔ UV is already installed");
     return true;
-  } catch (error) {
+  } catch {
     Logger.info("✖ UV is not installed");
     return false;
   }
@@ -74,6 +74,9 @@ async function installUv(): Promise<boolean> {
           ? 'powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"'
           : "curl -LsSf https://astral.sh/uv/install.sh | sh";
 
+        progress.report({
+          message: "Installing UV...",
+        });
         Logger.info(`Running UV installation command: ${installCommand}`);
         await execAsync(installCommand);
 
@@ -133,6 +136,9 @@ async function setupPythonWithUv(): Promise<boolean> {
     },
     async (progress) => {
       try {
+        progress.report({
+          message: "Setting up Python environment with UV...",
+        });
         const extensionDir = FileUtils.getExtensionFilePath("");
         const venvPath = path.join(extensionDir, "src", ".venv");
 
@@ -237,7 +243,7 @@ export async function checkAndSetupIfNeeded(): Promise<boolean> {
       Logger.info("✔ nbstata kernel found in Jupyter kernelspec");
       return true;
     }
-  } catch (error) {}
+  } catch {}
 
   try {
     // Check if we already have a working Python environment
@@ -256,7 +262,7 @@ export async function checkAndSetupIfNeeded(): Promise<boolean> {
           // this means nbstata is installed and working, we just need it to be in the kernelspec
           promptManualKernelInstall(pythonPath);
           return true;
-        } catch (error) {}
+        } catch {}
       }
     }
 

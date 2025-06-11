@@ -2,7 +2,7 @@
   "name": "vscode-stata",
   "displayName": "vscode-stata",
   "description": "VSCode and Stata integration",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.100.0"
   },
@@ -304,7 +304,7 @@
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "package": "rm -rf src/.venv && npm run check-types && npm run lint && node esbuild.js --production",
     "create-vsix": "npm run package && vsce package",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
